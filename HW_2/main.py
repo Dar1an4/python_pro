@@ -5,7 +5,7 @@ from mimesis import Address, Finance, Person
 
 """
 There are one unexpected error. 'near "________": syntax error'
-Its rised due to an internal error of mimesis library, sometimes generate bad names
+Its rise due to an internal error of mimesis library, sometimes generate bad names
 """
 
 
@@ -59,7 +59,7 @@ def db_max_personid(db_name='db-new.db', table_name='persons') -> int:
         return -1
 
 
-def db_linecouter(db_name='db-new.db', table_name='persons') -> int:
+def db_linecounter(db_name='db-new.db', table_name='persons') -> int:
     """
         Just checking and return how many lines are in the database table
     :param db_name: str, default - our DB
@@ -90,7 +90,8 @@ def db_insert(first_name: str, last_name: str, address: str, job: str, age: int,
     :param address: str, address of the person
     :param job: str, job (occupation) of the person
     :param age: int, age of the person
-    :param personid: int, individual PRIMARY KEY of input person. Defaults is max person id + 1, or insert it individually.
+    :param personid: int, individual PRIMARY KEY of input person.
+                     Defaults is max person id + 1, or insert it individually.
     :return: None. Only print report about completed work. if error - return -1
     """
     try:
@@ -122,13 +123,13 @@ def db_data_generator(counter: int, db_name='db-new.db', table_name='persons') -
     :param table_name: str, default - table `persons`
     :return: None. Only print report about completed work, and how many lines generated. if error - return -1
     """
-    start_generation = db_linecouter()  # need for counting of lines of data witch generated and inserted into the DB
+    start_generation = db_linecounter()  # need for counting of lines of data witch generated and inserted into the DB
     try:
         for _ in range(counter):
             db_insert(person.first_name(), person.last_name(),
                       f'{address.address()}, {address.city()}', f'{person.occupation()} in `{finance.company()}`',
                       person.age(minimum=18), personid=db_max_personid()+1, db_name=db_name, table_name=table_name)
-        print(f'Generationg was finishd. There are inserted {db_linecouter() -start_generation} peoples')
+        print(f'Generating was finished. There are inserted {db_linecounter() - start_generation} peoples')
         return
     except Exception as err:
         print(f'Something wrong111! error is: \n{err}')
@@ -167,7 +168,7 @@ def db_personreturn(sortrule: any, sortvalue: any, db_name='db-new.db', table_na
     :param sortvalue: any, rule witch we are returning data from the column.
     :param db_name: str, default - our DB
     :param table_name: str, default - table `persons`
-    :return: list, List of tuples with selected data WHERE ... if error - reutrn -1
+    :return: list, List of tuples with selected data WHERE ... if error - return -1
     """
     person_list = []
     try:
@@ -199,4 +200,4 @@ print(db_personreturn('age', 18))
 print(db_personreturn('address', 'Odessa'))
 
 print('There is', db_max_personid(), 'the max of peronid value')
-print('There are', db_linecouter(), 'lines of data int our DB, person table')
+print('There are', db_linecounter(), 'lines of data int our DB, person table')
