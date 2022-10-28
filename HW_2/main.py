@@ -200,7 +200,7 @@ db_insert('Alex', 'Pro', 'Odessa', 'an Officer', 30)
 
 db_insert('Alex', 'Pro', 'Odessa', 'an Officer', 30)
 
-db_data_generator(100000)
+db_data_generator(50000)
 
 print(db_sortperson(sortby='age'))
 
