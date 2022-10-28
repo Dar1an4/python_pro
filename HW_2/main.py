@@ -131,7 +131,7 @@ def db_data_generator(counter: int, db_name='db-new.db', table_name='persons') -
         for _ in range(counter):
             db_insert(person.first_name(), person.last_name(),
                       f'{address.address()}, {address.city()}', f'{person.occupation()} in `{finance.company()}`',
-                      person.age(minimum=18), personid=db_max_personid()+1, db_name=db_name, table_name=table_name)
+                      person.age(minimum=18), db_name=db_name, table_name=table_name)
         print(f'Generating was finished. There are inserted {db_linecounter() - start_generation} peoples')
         return
     except Exception as err:
