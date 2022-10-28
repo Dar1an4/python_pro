@@ -49,7 +49,7 @@ def db_max_personid(db_name='db-new.db', table_name='persons') -> int:
         with sqlite3.connect(db_name) as conn:
             cur = conn.cursor()
             cur.execute(f"""
-            SELECT MAX(personid) from {table_name}
+            SELECT MAX(personid) from {table_name};
             """)
             max_id = cur.fetchone()
             max_id = 0 if max_id[0] is None else max_id[0]
@@ -72,7 +72,7 @@ def db_linecounter(db_name='db-new.db', table_name='persons') -> int:
         with sqlite3.connect(db_name) as conn:
             cur = conn.cursor()
             cur.execute(f"""
-            SELECT COUNT(personid) from {table_name}
+            SELECT COUNT(personid) from {table_name};
             """)
             counter = cur.fetchone()[0]
             return counter
@@ -151,7 +151,7 @@ def db_sortperson(db_name='db-new.db', table_name='persons', sortby='personid') 
             cur = conn.cursor()
             cur.execute(f"""
             SELECT *
-            FROM {table_name} ORDER BY '{sortby}'
+            FROM {table_name} ORDER BY {sortby};
             """)
             data = cur.fetchall()
             for row in data:
@@ -177,7 +177,7 @@ def db_personreturn(sortrule: any, sortvalue: any, db_name='db-new.db', table_na
             cur = conn.cursor()
             cur.execute(f"""
             SELECT *
-            FROM {table_name} WHERE {sortrule} = '{sortvalue}';
+            FROM {table_name} WHERE {sortrule} = {sortvalue};
             """)
             data = cur.fetchall()
             for row in data:
