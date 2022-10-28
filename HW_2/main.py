@@ -92,7 +92,7 @@ def db_insert(first_name: str, last_name: str, address: str, job: str, age: int,
     :param address: str, address of the person
     :param job: str, job (occupation) of the person
     :param age: int, age of the person
-    :param personid: int, individual PRIMARY KEY of input person. Default is 0 (thats mean that will be use max+1
+    :param personid: int, individual PRIMARY KEY of input person. Default is 0 (that`s mean that will be use max+1
                      personid KEY), if you will not insert KEY personally
     :return: None. Only print report about completed work. if error - return 0
     """
