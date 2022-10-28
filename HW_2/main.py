@@ -25,8 +25,8 @@ def db_creator(db_name: str, table_name: str) -> None | int:
             cur.execute(f"""
             CREATE TABLE IF NOT EXISTS {table_name}(
             personid INT NOT NULL PRIMARY KEY,
-            first_name TEXT NOT NULL VARCHAR(128),
-            last_name TEXT NOT NULL VARCHAR(128),
+            first_name TEXT VARCHAR(128) NOT NULL,
+            last_name TEXT VARCHAR(128) NOT NULL,
             address TEXT VARCHAR(1024),
             job TEXT VARCHAR(128),
             age INT VARCHAR(3));
@@ -34,7 +34,7 @@ def db_creator(db_name: str, table_name: str) -> None | int:
         print('Mission completed. DB already exist or created')
         return
     except Exception as err:
-        print(f'Something wrong! error is: \n{err}')
+        print(f'Something wrong!` error is: \n{err}')
         return -1
 
 
@@ -43,7 +43,7 @@ def db_max_personid(db_name='db-new.db', table_name='persons') -> int:
     Just checking and return max personid
     :param db_name: str, default - our DB
     :param table_name: str, default - table `persons`
-    :return: int, max personid in column personid. if error - return -1
+    :return: int, max personid in column personid. if error - return -1 if personal table is empty: return 0
     """
     try:
         with sqlite3.connect(db_name) as conn:
@@ -52,10 +52,13 @@ def db_max_personid(db_name='db-new.db', table_name='persons') -> int:
             SELECT MAX(personid) from {table_name}
             """)
             max_id = cur.fetchone()
-            max_id = 0 if str(max_id[0]) == "None" else max_id[0]
-        return max_id
+            print(max_id)
+            max_id = 0 if max_id[0] is None else max_id[0]
+            return max_id
+    except sqlite3.OperationalError:
+        return 0
     except Exception as err:
-        print(f'Something wrong! error is: \n{err}')
+        print(f'Something wrong``! error is: \n{err}')
         return -1
 
 
@@ -79,7 +82,7 @@ def db_linecounter(db_name='db-new.db', table_name='persons') -> int:
         return -1
 
 
-def db_insert(first_name: str, last_name: str, address: str, job: str, age: int, personid=db_max_personid()+1,
+def db_insert(first_name: str, last_name: str, address: str, job: str, age: int, personid: int,
               db_name='db-new.db', table_name='persons') -> None | int:
     """
     Need to INSERT person with his personal data into the database table
@@ -91,8 +94,7 @@ def db_insert(first_name: str, last_name: str, address: str, job: str, age: int,
     :param job: str, job (occupation) of the person
     :param age: int, age of the person
     :param personid: int, individual PRIMARY KEY of input person.
-                     Defaults is max person id + 1, or insert it individually.
-    :return: None. Only print report about completed work. if error - return -1
+    :return: None. Only print report about completed work. if error - return 0
     """
     try:
         with sqlite3.connect(db_name) as conn:
@@ -112,7 +114,7 @@ def db_insert(first_name: str, last_name: str, address: str, job: str, age: int,
                 cur.execute(f"""
                 SELECT MAX(personid) from {table_name}
                 """)
-        return -1
+        return 0
 
 
 def db_data_generator(counter: int, db_name='db-new.db', table_name='persons') -> None | int:
@@ -189,9 +191,17 @@ def db_personreturn(sortrule: any, sortvalue: any, db_name='db-new.db', table_na
 
 db_creator('db-new.db', 'persons')
 
-db_insert('Alex', 'Pro', 'Odessa', 'an Officer', 30)
 
-db_data_generator(10000)
+db_insert('Alex', 'Pro', 'Odessa', 'an Officer', 30, db_max_personid()+1)
+
+db_insert('Alex', 'Pro', 'Odessa', 'an Officer', 30, db_max_personid()+1)
+
+db_insert('Alex', 'Pro', 'Odessa', 'an Officer', 30, db_max_personid()+1)
+
+print(db_max_personid())
+
+
+db_data_generator(10)
 
 print(db_sortperson(sortby='age'))
 
