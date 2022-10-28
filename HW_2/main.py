@@ -24,9 +24,9 @@ def db_creator(db_name: str, table_name: str) -> None | int:
             cur = conn.cursor()
             cur.execute(f"""
             CREATE TABLE IF NOT EXISTS {table_name}(
-            personid INT PRIMARY KEY,
-            first_name TEXT VARCHAR(128),
-            last_name TEXT VARCHAR(128),
+            personid INT NOT NULL PRIMARY KEY,
+            first_name TEXT NOT NULL VARCHAR(128),
+            last_name TEXT NOT NULL VARCHAR(128),
             address TEXT VARCHAR(1024),
             job TEXT VARCHAR(128),
             age INT VARCHAR(3));
