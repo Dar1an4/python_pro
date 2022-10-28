@@ -12,12 +12,12 @@ Its rised due to an internal error of mimesis library, sometimes generate bad na
 person, address, finance = Person('en'), Address('en'), Finance('en')
 
 
-def db_creator(db_name: str, table_name: str) -> None:
+def db_creator(db_name: str, table_name: str) -> None | int:
     """
     Creating our DB.
     :param db_name: If u need to create a new db or add table to exist db just input str new name of db
     :param table_name: enter str new name of table
-    :return: None. Only print report about completed work.
+    :return: None. Only print report about completed work. if error - return -1
     """
     try:
         with sqlite3.connect(db_name) as conn:
@@ -32,9 +32,10 @@ def db_creator(db_name: str, table_name: str) -> None:
             age INT VARCHAR(3));
             """)
         print('Mission completed. DB already exist or created')
+        return
     except Exception as err:
         print(f'Something wrong! error is: \n{err}')
-    return
+        return -1
 
 
 def db_max_personid(db_name='db-new.db', table_name='persons') -> int:
@@ -42,16 +43,20 @@ def db_max_personid(db_name='db-new.db', table_name='persons') -> int:
     Just checking and return max personid
     :param db_name: str, default - our DB
     :param table_name: str, default - table `persons`
-    :return: int, max personid in column personid
+    :return: int, max personid in column personid. if error - return -1
     """
-    with sqlite3.connect(db_name) as conn:
-        cur = conn.cursor()
-        cur.execute(f"""
-        SELECT MAX(personid) from {table_name}
-        """)
-        max_id = cur.fetchone()
-        max_id = 0 if str(max_id[0]) == "None" else max_id[0]
+    try:
+        with sqlite3.connect(db_name) as conn:
+            cur = conn.cursor()
+            cur.execute(f"""
+            SELECT MAX(personid) from {table_name}
+            """)
+            max_id = cur.fetchone()
+            max_id = 0 if str(max_id[0]) == "None" else max_id[0]
         return max_id
+    except Exception as err:
+        print(f'Something wrong! error is: \n{err}')
+        return -1
 
 
 def db_linecouter(db_name='db-new.db', table_name='persons') -> int:
@@ -59,19 +64,23 @@ def db_linecouter(db_name='db-new.db', table_name='persons') -> int:
         Just checking and return how many lines are in the database table
     :param db_name: str, default - our DB
     :param table_name: str, default - table `persons`
-    :return: int, how many lines of data are in our DB table
+    :return: int, how many lines of data are in our DB table. if error - return -1
     """
-    with sqlite3.connect(db_name) as conn:
-        cur = conn.cursor()
-        cur.execute(f"""
-        SELECT COUNT(personid) from {table_name}
-        """)
-        counter = cur.fetchone()[0]
-        return counter
+    try:
+        with sqlite3.connect(db_name) as conn:
+            cur = conn.cursor()
+            cur.execute(f"""
+            SELECT COUNT(personid) from {table_name}
+            """)
+            counter = cur.fetchone()[0]
+            return counter
+    except Exception as err:
+        print(f'Something wrong! error is: \n{err}')
+        return -1
 
 
 def db_insert(first_name: str, last_name: str, address: str, job: str, age: int, personid=db_max_personid()+1,
-              db_name='db-new.db', table_name='persons') -> None:
+              db_name='db-new.db', table_name='persons') -> None | int:
     """
     Need to INSERT person with his personal data into the database table
     :param db_name: str, default - our DB
@@ -82,7 +91,7 @@ def db_insert(first_name: str, last_name: str, address: str, job: str, age: int,
     :param job: str, job (occupation) of the person
     :param age: int, age of the person
     :param personid: int, individual PRIMARY KEY of input person. Defaults is max person id + 1, or insert it individually.
-    :return: None. Only print report about completed work.
+    :return: None. Only print report about completed work. if error - return -1
     """
     try:
         with sqlite3.connect(db_name) as conn:
@@ -93,6 +102,7 @@ def db_insert(first_name: str, last_name: str, address: str, job: str, age: int,
             '{job}', '{age}');
             """)
         print(f'Insert of personid №{personid} successfully created')
+        return
     except Exception as err:
         print(f'Something wrong```! error is: \n{err}')
         if str(err).find('personid'):
@@ -101,16 +111,16 @@ def db_insert(first_name: str, last_name: str, address: str, job: str, age: int,
                 cur.execute(f"""
                 SELECT MAX(personid) from {table_name}
                 """)
-    return
+        return -1
 
 
-def db_data_generator(counter: int, db_name='db-new.db', table_name='persons') -> None:
+def db_data_generator(counter: int, db_name='db-new.db', table_name='persons') -> None | int:
     """
     Need for generate data into our DB
     :param counter: int, how many records to generate
     :param db_name: str, default - our DB
     :param table_name: str, default - table `persons`
-    :return: None. Only print report about completed work, and how many lines generated.
+    :return: None. Only print report about completed work, and how many lines generated. if error - return -1
     """
     start_generation = db_linecouter()  # need for counting of lines of data witch generated and inserted into the DB
     try:
@@ -119,11 +129,13 @@ def db_data_generator(counter: int, db_name='db-new.db', table_name='persons') -
                       f'{address.address()}, {address.city()}', f'{person.occupation()} in `{finance.company()}`',
                       person.age(minimum=18), personid=db_max_personid()+1, db_name=db_name, table_name=table_name)
         print(f'Generationg was finishd. There are inserted {db_linecouter() -start_generation} peoples')
+        return
     except Exception as err:
         print(f'Something wrong111! error is: \n{err}')
+        return -1
 
 
-def db_sortperson(db_name='db-new.db', table_name='persons', sortby='personid') -> list or int:
+def db_sortperson(db_name='db-new.db', table_name='persons', sortby='personid') -> list | int:
     """
     Need for sorting data from database.
     :param db_name: str, default - our DB
@@ -148,7 +160,7 @@ def db_sortperson(db_name='db-new.db', table_name='persons', sortby='personid') 
         return -1
 
 
-def db_personreturn(sortrule: any, sortvalue: any, db_name='db-new.db', table_name='persons') -> list or int:
+def db_personreturn(sortrule: any, sortvalue: any, db_name='db-new.db', table_name='persons') -> list | int:
     """
     Print a tuple of persons that are associated with a given params
     :param sortrule: any, column witch we are returning data.
