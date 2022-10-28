@@ -52,11 +52,10 @@ def db_max_personid(db_name='db-new.db', table_name='persons') -> int:
             SELECT MAX(personid) from {table_name}
             """)
             max_id = cur.fetchone()
-            print(max_id)
             max_id = 0 if max_id[0] is None else max_id[0]
             return max_id
     except sqlite3.OperationalError:
-        return 0
+        return 0  # if db is empty
     except Exception as err:
         print(f'Something wrong``! error is: \n{err}')
         return -1
@@ -191,17 +190,15 @@ def db_personreturn(sortrule: any, sortvalue: any, db_name='db-new.db', table_na
 
 db_creator('db-new.db', 'persons')
 
-
 db_insert('Alex', 'Pro', 'Odessa', 'an Officer', 30, db_max_personid()+1)
 
 db_insert('Alex', 'Pro', 'Odessa', 'an Officer', 30, db_max_personid()+1)
 
 db_insert('Alex', 'Pro', 'Odessa', 'an Officer', 30, db_max_personid()+1)
 
-print(db_max_personid())
+db_insert('Alex', 'Pro', 'Odessa', 'an Officer', 30, db_max_personid()+1)
 
-
-db_data_generator(10)
+db_data_generator(100000)
 
 print(db_sortperson(sortby='age'))
 
@@ -209,5 +206,5 @@ print(db_personreturn('age', 18))
 
 print(db_personreturn('address', 'Odessa'))
 
-print('There is', db_max_personid(), 'the max of peronid value')
+print('There is', db_max_personid(), 'the max of personid value')
 print('There are', db_linecounter(), 'lines of data int our DB, person table')
