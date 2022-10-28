@@ -81,7 +81,7 @@ def db_linecounter(db_name='db-new.db', table_name='persons') -> int:
         return -1
 
 
-def db_insert(first_name: str, last_name: str, address: str, job: str, age: int, personid: int,
+def db_insert(first_name: str, last_name: str, address: str, job: str, age: int, personid=0,
               db_name='db-new.db', table_name='persons') -> None | int:
     """
     Need to INSERT person with his personal data into the database table
@@ -92,9 +92,11 @@ def db_insert(first_name: str, last_name: str, address: str, job: str, age: int,
     :param address: str, address of the person
     :param job: str, job (occupation) of the person
     :param age: int, age of the person
-    :param personid: int, individual PRIMARY KEY of input person.
+    :param personid: int, individual PRIMARY KEY of input person. Default is 0 (thats mean that will be use max+1
+                     personid KEY), if you will not insert KEY personally
     :return: None. Only print report about completed work. if error - return 0
     """
+    personid = db_max_personid()+1 if personid == 0 else personid
     try:
         with sqlite3.connect(db_name) as conn:
             cur = conn.cursor()
@@ -177,7 +179,7 @@ def db_personreturn(sortrule: any, sortvalue: any, db_name='db-new.db', table_na
             cur = conn.cursor()
             cur.execute(f"""
             SELECT *
-            FROM {table_name} WHERE {sortrule} = {sortvalue};
+            FROM {table_name} WHERE {sortrule} = '{sortvalue}';
             """)
             data = cur.fetchall()
             for row in data:
@@ -190,13 +192,13 @@ def db_personreturn(sortrule: any, sortvalue: any, db_name='db-new.db', table_na
 
 db_creator('db-new.db', 'persons')
 
-db_insert('Alex', 'Pro', 'Odessa', 'an Officer', 30, db_max_personid()+1)
+db_insert('Alex', 'Pro', 'Odessa', 'an Officer', 30)
 
-db_insert('Alex', 'Pro', 'Odessa', 'an Officer', 30, db_max_personid()+1)
+db_insert('Alex', 'Pro', 'Odessa', 'an Officer', 30)
 
-db_insert('Alex', 'Pro', 'Odessa', 'an Officer', 30, db_max_personid()+1)
+db_insert('Alex', 'Pro', 'Odessa', 'an Officer', 30)
 
-db_insert('Alex', 'Pro', 'Odessa', 'an Officer', 30, db_max_personid()+1)
+db_insert('Alex', 'Pro', 'Odessa', 'an Officer', 30)
 
 db_data_generator(100000)
 
