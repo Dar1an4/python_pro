@@ -40,8 +40,8 @@ def db_creator(db_name: str, table_name: str) -> None:
 def db_max_personid(db_name='db-new.db', table_name='persons') -> int:
     """
     Just checking and return max personid
-    :param db_name: Default - our database
-    :param table_name: Default - our table persons
+    :param db_name: str, default - our DB
+    :param table_name: str, default - table `persons`
     :return: int, max personid in column personid
     """
     with sqlite3.connect(db_name) as conn:
@@ -57,8 +57,8 @@ def db_max_personid(db_name='db-new.db', table_name='persons') -> int:
 def db_linecouter(db_name='db-new.db', table_name='persons') -> int:
     """
         Just checking and return how many lines are in the database table
-    :param db_name: Default - our database  db-new
-    :param table_name: Default - our table persons
+    :param db_name: str, default - our DB
+    :param table_name: str, default - table `persons`
     :return: int, how many lines of data are in our DB table
     """
     with sqlite3.connect(db_name) as conn:
@@ -70,12 +70,12 @@ def db_linecouter(db_name='db-new.db', table_name='persons') -> int:
         return counter
 
 
-def db_insert(db_name: str, table_name: str, first_name: str, last_name: str, address: str, job: str, age: int,
-              personid=db_max_personid() + 1) -> None:
+def db_insert(first_name: str, last_name: str, address: str, job: str, age: int, personid=db_max_personid()+1,
+              db_name='db-new.db', table_name='persons') -> None:
     """
     Need to INSERT person with his personal data into the database table
-    :param db_name: str, input  name or path of a database connection
-    :param table_name: int, input str name of db table
+    :param db_name: str, default - our DB
+    :param table_name: str, default - table `persons`
     :param first_name: str, first name of the person
     :param last_name: str, last name of the person
     :param address: str, address of the person
@@ -115,22 +115,23 @@ def db_data_generator(counter: int, db_name='db-new.db', table_name='persons') -
     start_generation = db_linecouter()  # need for counting of lines of data witch generated and inserted into the DB
     try:
         for _ in range(counter):
-            db_insert(db_name, table_name, person.first_name(), person.last_name(),
+            db_insert(person.first_name(), person.last_name(),
                       f'{address.address()}, {address.city()}', f'{person.occupation()} in `{finance.company()}`',
-                      person.age(minimum=18), personid=db_max_personid() + 1)
+                      person.age(minimum=18), personid=db_max_personid()+1, db_name=db_name, table_name=table_name)
         print(f'Generationg was finishd. There are inserted {db_linecouter() -start_generation} peoples')
     except Exception as err:
         print(f'Something wrong111! error is: \n{err}')
 
 
-def db_sortperson(db_name='db-new.db', table_name='persons', sortby='personid'):
+def db_sortperson(db_name='db-new.db', table_name='persons', sortby='personid') -> list or int:
     """
     Need for sorting data from database.
     :param db_name: str, default - our DB
     :param table_name: str, default - table `persons`
     :param sortby: any, param witch we need to sort by. Default is 'personid'
-    :return: None. Only print tuples with our data
+    :return: list, List of tuples with sort data, if error - return -1
     """
+    person_list = []
     try:
         with sqlite3.connect(db_name) as conn:
             cur = conn.cursor()
@@ -140,21 +141,23 @@ def db_sortperson(db_name='db-new.db', table_name='persons', sortby='personid'):
             """)
             data = cur.fetchall()
             for row in data:
-                print(row)
+                person_list.append(row)
+        return person_list
     except Exception as err:
         print(f'Something wrong111! error is: \n{err}')
-    return
+        return -1
 
 
-def db_personreturn(sortrule: any, sortvalue: any, db_name='db-new.db', table_name='persons'):
+def db_personreturn(sortrule: any, sortvalue: any, db_name='db-new.db', table_name='persons') -> list or int:
     """
     Print a tuple of persons that are associated with a given params
     :param sortrule: any, column witch we are returning data.
     :param sortvalue: any, rule witch we are returning data from the column.
     :param db_name: str, default - our DB
     :param table_name: str, default - table `persons`
-    :return: None. Only print tuples with our data
+    :return: list, List of tuples with selected data WHERE ... if error - reutrn -1
     """
+    person_list = []
     try:
         with sqlite3.connect(db_name) as conn:
             cur = conn.cursor()
@@ -164,22 +167,24 @@ def db_personreturn(sortrule: any, sortvalue: any, db_name='db-new.db', table_na
             """)
             data = cur.fetchall()
             for row in data:
-                print(row)
+                person_list.append(row)
+        return person_list
     except Exception as err:
         print(f'Something wrong111! error is: \n{err}')
+        return -1
 
 
 db_creator('db-new.db', 'persons')
 
-db_insert('db-new.db', 'persons', 'Alex', 'Pro', 'Odessa', 'an Officer', 30)
+db_insert('Alex', 'Pro', 'Odessa', 'an Officer', 30)
 
-db_data_generator(10000)
+#db_data_generator(10000)
 
-db_sortperson(sortby='age')
+print(db_sortperson(sortby='age'))
 
-db_personreturn('age', 18)
+print(db_personreturn('age', 18))
 
-db_personreturn('address', 'Odessa')
+print(db_personreturn('address', 'Odessa'))
 
 print('There is', db_max_personid(), 'the max of peronid value')
 print('There are', db_linecouter(), 'lines of data int our DB, person table')
