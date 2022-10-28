@@ -178,7 +178,7 @@ db_creator('db-new.db', 'persons')
 
 db_insert('Alex', 'Pro', 'Odessa', 'an Officer', 30)
 
-#db_data_generator(10000)
+db_data_generator(10000)
 
 print(db_sortperson(sortby='age'))
 
